@@ -55,11 +55,11 @@ print(f'n_procs: {n_procs}')
 #plt.savefig('sensitivity_clock_time.png', dpi=300)
 
 # plot dpls
-plt.figure()
-scaling_factor = 40
-dpls = [dpl.scale(scaling_factor).smooth(20) for dpl in dpls]  # scale in place
-avg_dpl = average_dipoles(dpls)
-fig, axes = plt.subplots(2, 1, sharex=True, sharey=True)
-plot_dipole(dpls, ax=axes[0], show=False)
-plot_dipole(avg_dpl, ax=axes[1], show=False)
-plt.savefig('dipoles_mn.png', dpi=300)
+#plt.figure()
+#scaling_factor = 40
+#dpls = [dpl.scale(scaling_factor).smooth(20) for dpl in dpls]  # scale in place
+#avg_dpl = average_dipoles(dpls)
+#fig, axes = plt.subplots(2, 1, sharex=True, sharey=True)
+#plot_dipole(dpls, ax=axes[0], show=False)
+#plot_dipole(avg_dpl, ax=axes[1], show=False)
+#plt.savefig('dipoles_mn.png', dpi=300)
