@@ -20,7 +20,7 @@ import os.path as op
 import timeit
 
 import matplotlib
-matplotlib.use('TkAgg')
+# matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 import hnn_core
