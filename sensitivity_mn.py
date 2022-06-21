@@ -36,25 +36,23 @@ params = hnn_core.read_params(params_fname)
 net = jones_2009_model(params, add_drives_from_params=True)
 
 # run 100 trials per simulation with varying numbers of cores
-n_procs_list = [1] + list(range(2, 25, 2))
+n_procs = 24
 durations = list()
-for n_procs in n_procs_list:
-    start = timeit.default_timer()
+start = timeit.default_timer()
 
-    with MPIBackend(n_procs=n_procs):
-        dpls = simulate_dipole(net, tstop=170., n_trials=25)
+with MPIBackend(n_procs=n_procs):
+    dpls = simulate_dipole(net, tstop=170., n_trials=25)
 
-    stop = timeit.default_timer()
-    durations.append((stop - start) / 60)
-    print(f'n_procs: {n_procs}')
+stop = timeit.default_timer()
+durations.append((stop - start) / 60)
+print(f'n_procs: {n_procs}')
 
 # plot run time vs. # of cores
 plt.figure()
-plt.step(n_procs_list, durations, where='post')
+plt.step(n_procs, durations, where='post')
 plt.xlabel('# of cores')
 plt.ylabel('computation time (min)')
-# plt.savefig('clock_hnn_core.png', dpi=300)
-# plt.savefig('clock_hnn_core.eps')
+plt.savefig('sensitivity_clock_time.png', dpi=300)
 
 # plot dpls
 plt.figure()
@@ -64,4 +62,4 @@ avg_dpl = average_dipoles(dpls)
 fig, axes = plt.subplots(2, 1, sharex=True, sharey=True)
 plot_dipole(dpls, ax=axes[0], show=False)
 plot_dipole(avg_dpl, ax=axes[1], show=False)
-# plt.savefig('clock_hnn_core_mn.png', dpi=300)
+plt.savefig('dipoles_mn.png', dpi=300)
