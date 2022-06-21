@@ -19,7 +19,7 @@ to the recorded data.
 import os.path as op
 import timeit
 
-import matplotlib
+# import matplotlib
 # matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
@@ -48,11 +48,11 @@ durations.append((stop - start) / 60)
 print(f'n_procs: {n_procs}')
 
 # plot run time vs. # of cores
-plt.figure()
-plt.step(n_procs, durations, where='post')
-plt.xlabel('# of cores')
-plt.ylabel('computation time (min)')
-plt.savefig('sensitivity_clock_time.png', dpi=300)
+#plt.figure()
+#plt.step(n_procs, durations, where='post')
+#plt.xlabel('# of cores')
+#plt.ylabel('computation time (min)')
+#plt.savefig('sensitivity_clock_time.png', dpi=300)
 
 # plot dpls
 plt.figure()
