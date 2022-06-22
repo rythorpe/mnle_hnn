@@ -1,9 +1,11 @@
 #!/bin/bash
 
-#SBATCH -J sensitivity_job
+t = `date +"%Y-%m-%d"`
+
+#SBATCH --job-name=run_simjob --output=run_simjob.out.$t --error=run_simjob.err.$t
 #SBATCH -n 16
-##SBATCH --mem=40g --ntasks-per-node=16 -N 25
-#SBATCH --mem=32g
+##SBATCH --mem=40g --ntasks-per-node=16 -N 32
+#SBATCH -m 32g
 #SBATCH -t 24:00:00
 #SBATCH -A carney-sjones-condo
 
@@ -13,5 +15,6 @@
 
 # Run a command
 python3 sensitivity_mn.py
+echo "job completed"
 
 # deactivate

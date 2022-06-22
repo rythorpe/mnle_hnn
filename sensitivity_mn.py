@@ -17,6 +17,7 @@ to the recorded data.
 # Authors: Ryan Thorpe <ryvthorpe@gmail.com>
 
 import os.path as op
+from os import environ
 import timeit
 
 import matplotlib
@@ -36,7 +37,10 @@ params = hnn_core.read_params(params_fname)
 net = jones_2009_model(params, add_drives_from_params=True)
 
 # run 100 trials per simulation with varying numbers of cores
-n_procs = 24
+if 'SLURM_CPUS_ON_NODE' in environ:
+    n_procs = int(environ['SLURM_CPUS_ON_NODE'])
+else:
+    n_procs = 1
 durations = list()
 start = timeit.default_timer()
 
