@@ -3,7 +3,7 @@
 #SBATCH -J run_simjob -o run_simjob.out -e run_simjob.err
 #SBATCH -n 16
 ##SBATCH --mem=40g --ntasks-per-node=16 -N 32
-#SBATCH -m 32g
+#SBATCH --mem=32g
 #SBATCH -t 5:00:00
 #SBATCH -A carney-sjones-condo
 
