@@ -21,7 +21,7 @@ import timeit
 
 # import matplotlib
 # matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 import hnn_core
 from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
