@@ -1,12 +1,10 @@
 #!/bin/bash
 
-t = `date +"%Y-%m-%d"`
-
-#SBATCH --job-name=run_simjob --output=run_simjob.out.$t --error=run_simjob.err.$t
+#SBATCH --job-name=run_simjob --output=run_simjob.out --error=run_simjob.err
 #SBATCH -n 16
 ##SBATCH --mem=40g --ntasks-per-node=16 -N 32
 #SBATCH -m 32g
-#SBATCH -t 24:00:00
+#SBATCH -t 5:00:00
 #SBATCH -A carney-sjones-condo
 
 
@@ -15,6 +13,5 @@ t = `date +"%Y-%m-%d"`
 
 # Run a command
 python3 sensitivity_mn.py
-echo "job completed"
 
 # deactivate
