@@ -20,7 +20,7 @@ import os.path as op
 from os import environ
 import timeit
 
-import matplotlib
+# import matplotlib
 # matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
@@ -36,7 +36,7 @@ params_fname = ('/users/rthorpe/data/rthorpe/hnn_out/param/'
 params = hnn_core.read_params(params_fname)
 net = jones_2009_model(params, add_drives_from_params=True)
 
-# run 100 trials per simulation with varying numbers of cores
+# find the number of available cores for parallel processing
 if 'SLURM_CPUS_ON_NODE' in environ:
     n_procs = int(environ['SLURM_CPUS_ON_NODE'])
 else:
@@ -44,6 +44,7 @@ else:
 durations = list()
 start = timeit.default_timer()
 
+# run simulation distributed over multiple cores
 with MPIBackend(n_procs=n_procs):
     dpls = simulate_dipole(net, tstop=170., n_trials=25)
 
