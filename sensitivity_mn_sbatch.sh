@@ -4,7 +4,7 @@
 #SBATCH -n 16
 ##SBATCH --mem=40g --ntasks-per-node=16 -N 25
 #SBATCH --mem=32g
-#SBATCH -t 4:00:00
+#SBATCH -t 24:00:00
 #SBATCH -A carney-sjones-condo
 
 
