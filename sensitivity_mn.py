@@ -17,6 +17,7 @@ to the recorded data.
 # Authors: Ryan Thorpe <ryvthorpe@gmail.com>
 #          Blake Caldwell <1blakecaldwell@gmail.com>
 
+import sys
 import os.path as op
 from os import environ
 from mpi4py import MPI
@@ -33,40 +34,9 @@ def enum(*sequential, **named):
     return type('Enum', (), enums)
 
 
-def run_hnn_simulation(n_procs, rank):
-    """Run a single hnn-core simulation"""
-    # import matplotlib
-    # matplotlib.use('TkAgg')
-    import matplotlib.pyplot as plt
-
-    import hnn_core
-    from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
-                          MPIBackend)
-    from hnn_core.viz import plot_dipole
-
-    # load param file
-    params_fname = ('/users/rthorpe/data/rthorpe/hnn_out/param/'
-                    'med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
-    params = hnn_core.read_params(params_fname)
-    net = jones_2009_model(params, add_drives_from_params=True)
-
-    # run simulation distributed over multiple cores
-    with MPIBackend(n_procs=n_procs):
-        dpls = simulate_dipole(net, tstop=170., n_trials=25)
-
-    # plot dpls
-    plt.figure()
-    scaling_factor = 40
-    dpls = [dpl.scale(scaling_factor).smooth(20) for dpl in dpls]  # scale in place
-    avg_dpl = average_dipoles(dpls)
-    fig, axes = plt.subplots(2, 1, sharex=True, sharey=True)
-    plot_dipole(dpls, ax=axes[0], show=False)
-    plot_dipole(avg_dpl, ax=axes[1], show=False)
-    plt.savefig(f'dipoles_mn{rank:02.0f}.png', dpi=300)
-
-def start_master_proc(comm, size, rank, status, name):
+def start_master_proc(comm, size, rank, status, processor_name):
     """Initialize a master process for setting parametes and collecting data"""
-    
+
     if 'SLURM_NNODES' in environ:
         n_nodes = max(1, size - 1)
     else:
@@ -74,13 +44,14 @@ def start_master_proc(comm, size, rank, status, name):
 
     print("Master starting sensitivity analysis on %d cores" % n_nodes)
 
-def start_worker_proc(comm, size, rank, status, name):
+
+def start_worker_proc(comm, size, rank, status, processor_name):
     """Initialize a worker process for running simulations"""
 
     # Define MPI message tags
     tags = enum('READY', 'DONE', 'EXIT', 'START')
 
-    print("Worker started with rank %d on %s." % (rank, name))
+    print("Worker started with rank %d on %s." % (rank, processor_name))
 
     # receive experimental data
     (exp_data, params_input) = comm.bcast(comm.Get_rank(), root=0)
@@ -93,15 +64,15 @@ def start_worker_proc(comm, size, rank, status, name):
 
     # limit MPI to this host only
     mpiinfo = MPI.Info().Create()
-    mpiinfo.Set('host', name.split('.')[0])
+    mpiinfo.Set('host', processor_name.split('.')[0])
     mpiinfo.Set('ompi_param', 'rmaps_base_inherit=0')
     mpiinfo.Set('ompi_param', 'rmaps_base_mapping_policy=core')
     mpiinfo.Set('ompi_param', 'rmaps_base_oversubscribe=1')
     # spawn NEURON sim
-    subcomm = MPI.COMM_SELF.Spawn('nrniv',
-            args=['nrniv', '-python', '-mpi', '-nobanner', 'python',
-                  'examples/calculate_dipole_err.py'],
-            info = mpiinfo, maxprocs=n_procs)
+    subcomm = MPI.COMM_SELF.Spawn(sys.executable,
+                                  args=['run_hnn_sim.py', str(n_procs),
+                                        str(rank)],
+                                  info=mpiinfo, maxprocs=n_procs)
 
     # send params and exp_data to spawned nrniv procs
     simdata = (exp_data, params_input)
@@ -121,13 +92,13 @@ def start_worker_proc(comm, size, rank, status, name):
 
         tag = status.Get_tag()
         if tag == tags.EXIT:
-            print('worker %d on %s has received exit signal'%(rank, name))
+            print('worker %d on %s has received exit signal'%(rank, processor_name))
             break
 
         #assert(tag == tags.START)
 
         #finish = MPI.Wtime() - start
-        #print('worker %s waited %.2fs for param set' % (name, finish))
+        #print('worker %s waited %.2fs for param set' % (processor_name, finish))
 
         # Start clock
         start = MPI.Wtime()
@@ -143,8 +114,8 @@ def start_worker_proc(comm, size, rank, status, name):
 
         finish = MPI.Wtime() - start
         avg_sim_times.append(finish)
-        print('worker %s took %.2fs for simulation (avg=%.2fs)' % (name, finish, mean(avg_sim_times)))
-   
+        print('worker %s took %.2fs for simulation (avg=%.2fs)' % (processor_name, finish, mean(avg_sim_times)))
+
         # send results back
         comm.isend(temp_results, dest=0, tag=tags.DONE)
 
@@ -164,9 +135,9 @@ if __name__ == "__main__":
     size = comm.size        # total number of processes
     rank = comm.rank        # rank of this process
     status = MPI.Status()   # get MPI status object
-    name = MPI.Get_processor_name()
+    processor_name = MPI.Get_processor_name()
 
     if rank == 0:
-        start_master_proc(comm, size, rank, status, name)
+        start_master_proc(comm, size, rank, status, processor_name)
     else:
-        start_worker_proc(comm, size, rank, status, name)
+        start_worker_proc(comm, size, rank, status, processor_name)
