@@ -34,18 +34,22 @@ def enum(*sequential, **named):
     return type('Enum', (), enums)
 
 
-def start_master_proc(comm, size, rank, status, processor_name):
-    """Initialize a master process for setting parametes and collecting data"""
+def start_master_proc(comm, rank, status, processor_name):
+    """Initialize a master process for setting parameters and collecting data"""
 
+    size = comm.Get_size()  # total number of inter-node processes
     if 'SLURM_NNODES' in environ:
         n_nodes = max(1, size - 1)
     else:
         n_nodes = 1
 
-    print("Master starting sensitivity analysis on %d cores" % n_nodes)
+    print("Master starting sensitivity analysis on %d nodes" % n_nodes)
 
 
-def start_worker_proc(comm, size, rank, status, processor_name):
+
+
+
+def start_worker_proc(comm, rank, status, processor_name):
     """Initialize a worker process for running simulations"""
 
     # Define MPI message tags
@@ -54,7 +58,7 @@ def start_worker_proc(comm, size, rank, status, processor_name):
     print("Worker started with rank %d on %s." % (rank, processor_name))
 
     # receive experimental data
-    (exp_data, params_input) = comm.bcast(comm.Get_rank(), root=0)
+    #(exp_data, params_input) = comm.bcast(comm.Get_rank(), root=0)
 
     # find the number of available cores for parallel processing
     if 'SLURM_CPUS_ON_NODE' in environ:
@@ -70,8 +74,7 @@ def start_worker_proc(comm, size, rank, status, processor_name):
     mpiinfo.Set('ompi_param', 'rmaps_base_oversubscribe=1')
     # spawn NEURON sim
     subcomm = MPI.COMM_SELF.Spawn(sys.executable,
-                                  args=['run_hnn_sim.py', str(n_procs),
-                                        str(rank)],
+                                  args=['run_hnn_sim.py', str(n_procs)],
                                   info=mpiinfo, maxprocs=n_procs)
 
     # send params and exp_data to spawned nrniv procs
@@ -132,12 +135,11 @@ def start_worker_proc(comm, size, rank, status, processor_name):
 
 if __name__ == "__main__":
     comm = MPI.COMM_WORLD   # get MPI communicator object
-    size = comm.size        # total number of processes
-    rank = comm.rank        # rank of this process
+    rank = comm.Get_rank()        # rank of this process
     status = MPI.Status()   # get MPI status object
     processor_name = MPI.Get_processor_name()
 
     if rank == 0:
-        start_master_proc(comm, size, rank, status, processor_name)
+        start_master_proc(comm, rank, status, processor_name)
     else:
-        start_worker_proc(comm, size, rank, status, processor_name)
+        start_worker_proc(comm, rank, status, processor_name)
