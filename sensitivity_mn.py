@@ -37,32 +37,56 @@ def enum(*sequential, **named):
 def start_master_proc(comm, rank, status, processor_name):
     """Initialize a master process for setting parameters and collecting data"""
 
+    print(f'Master starting with rank {rank} on {processor_name}')
+
     size = comm.Get_size()  # total number of inter-node processes
     if 'SLURM_NNODES' in environ:
+        # main comm is oversubscribed: don't include master process
         n_nodes = max(1, size - 1)
     else:
         n_nodes = 1
 
-    print("Master starting sensitivity analysis on %d nodes" % n_nodes)
+    print(f"Master starting sensitivity analysis on {n_nodes} nodes")
 
+    # worker proc parameters
+    n_workers = n_tasks = n_nodes
+    closed_workers = 0
+    task_idx = 0
 
+    # define parameters for each task
+    new_params = np.linspace(55, 75, n_tasks)
+    #comm.bcast(new_params, root=MPI.ROOT)
 
+    #results = [None for task_idx in range(len(n_tasks))]
+    while closed_workers < n_workers:
+        data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+        source = status.Get_source()
+        tag = status.Get_tag()
+
+        if tag == tags.READY:
+            # worker is ready, so send it a task
+            if task_idx < n_tasks:
+                print("Sending task %d to worker %d" % (task_idx, source))
+                comm.send(new_params[task_idx], dest=source, tag=tags.START)
+                task_idx += 1
+            else:
+                comm.isend(None, dest=source, tag=tags.EXIT)
+        elif tag == tags.DONE:
+            print("Got data from worker %d" % source)
+        elif tag == tags.EXIT:
+            print("Worker %d exited (%d running)" % (source, closed_workers))
+            closed_workers += 1
 
 
 def start_worker_proc(comm, rank, status, processor_name):
     """Initialize a worker process for running simulations"""
 
-    # Define MPI message tags
-    tags = enum('READY', 'DONE', 'EXIT', 'START')
-
     print("Worker started with rank %d on %s." % (rank, processor_name))
-
-    # receive experimental data
-    #(exp_data, params_input) = comm.bcast(comm.Get_rank(), root=0)
 
     # find the number of available cores for parallel processing
     if 'SLURM_CPUS_ON_NODE' in environ:
-        n_procs = int(environ['SLURM_CPUS_ON_NODE'])
+        # XXX minus 2???
+        n_procs = int(environ['SLURM_CPUS_ON_NODE']) - 2
     else:
         n_procs = 1
 
@@ -76,10 +100,12 @@ def start_worker_proc(comm, rank, status, processor_name):
     subcomm = MPI.COMM_SELF.Spawn(sys.executable,
                                   args=['run_hnn_sim.py', str(n_procs)],
                                   info=mpiinfo, maxprocs=n_procs)
+    # receive experimental data
+    #(exp_data, params_input) = comm.bcast(comm.Get_rank(), root=0)
 
     # send params and exp_data to spawned nrniv procs
-    simdata = (exp_data, params_input)
-    subcomm.bcast(simdata, root=MPI.ROOT)
+    #simdata = (exp_data, params_input)
+    #subcomm.bcast(simdata, root=MPI.ROOT)
 
     avg_sim_times = []
 
@@ -134,10 +160,13 @@ def start_worker_proc(comm, rank, status, processor_name):
 
 
 if __name__ == "__main__":
-    comm = MPI.COMM_WORLD   # get MPI communicator object
-    rank = comm.Get_rank()        # rank of this process
-    status = MPI.Status()   # get MPI status object
+    comm = MPI.COMM_WORLD  # get MPI communicator object
+    rank = comm.Get_rank()  # rank of this process
+    status = MPI.Status()  # get MPI status object
     processor_name = MPI.Get_processor_name()
+
+    # Define MPI message tags
+    tags = enum('READY', 'DONE', 'EXIT', 'START')
 
     if rank == 0:
         start_master_proc(comm, rank, status, processor_name)
