@@ -54,7 +54,7 @@ def start_master_proc(comm, rank, status, processor_name):
     task_idx = 0
 
     # define parameters for each task
-    new_params = np.linspace(55, 75, n_tasks)
+    new_params = np.linspace(75, 95, n_tasks)
     #comm.bcast(new_params, root=MPI.ROOT)
 
     #results = [None for task_idx in range(len(n_tasks))]
@@ -138,7 +138,7 @@ def start_worker_proc(comm, rank, status, processor_name):
         # wait to recevie results from child rank 0
         #temp_results = np.array([np.zeros(int(params_input['tstop'] / params_input['dt'] + 1)),
         #                         np.zeros(2)])
-        temp_results = subcomm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG)
+        #temp_results = subcomm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG)
         #subcomm.Recv(temp_results, source=MPI.ANY_SOURCE)
 
         finish = MPI.Wtime() - start
@@ -146,7 +146,7 @@ def start_worker_proc(comm, rank, status, processor_name):
         print('worker %s took %.2fs for simulation (avg=%.2fs)' % (processor_name, finish, mean(avg_sim_times)))
 
         # send results back
-        comm.isend(temp_results, dest=0, tag=tags.DONE)
+        #comm.isend(temp_results, dest=0, tag=tags.DONE)
 
         # tell rank 0 we are ready (again)
         comm.isend(None, dest=0, tag=tags.READY)

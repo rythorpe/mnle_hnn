@@ -15,17 +15,26 @@ from hnn_core.viz import plot_dipole
 if __name__ == "__main__":
     # set MPI variables
     n_procs = int(sys.argv[1])
-    rank = MPI.COMM_WORLD.Get_rank()
+    comm = MPI.COMM.Get_parent()
+    rank = comm.Get_rank()
+
+    new_param = comm.bcast(rank, root=0)  # blocking
 
     # load param file
     params_fname = ('/users/rthorpe/data/rthorpe/hnn_out/param/'
                     'med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
     params = hnn_core.read_params(params_fname)
+
+    params['t_evdist_1'] = new_param
     net = jones_2009_model(params, add_drives_from_params=True)
 
+    start = MPI.Wtime()
     # run simulation distributed over multiple cores
     with MPIBackend(n_procs=n_procs):
         dpls = simulate_dipole(net, tstop=170., n_trials=25)
+    finish = MPI.Wtime()
+    elapsed_time = finish - start
+    print(f'Completed simulation on rank {rank} in {elapsed_time}')
 
     # plot dpls & save
     plt.figure()
