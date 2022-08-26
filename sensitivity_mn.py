@@ -36,7 +36,7 @@ def enum(*sequential, **named):
 
 def run_sim_across_node_cores(drive_params, n_procs, mpi_info):
     # set MPI variables
-    comm = MPI.COMM.Get_parent()
+    comm = MPI.Comm.Get_parent()
     rank = comm.Get_rank()
 
     # load original parameters
