@@ -10,12 +10,12 @@ from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
 n_sweep_sims = 50
 n_trials_per_sim = 100
 params_to_vary = []
-#params_fname = ('/users/rthorpe/data/rthorpe/hnn_out/param/'
-#                'med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
-params_fname = ('/home/ryan/Dropbox (Brown)/nociceptive_erp_paper_figures/'
-                'scripts/sims_hnn_core/sim_data_initial/'
-                'med_nerve_2020_04_27_2prox_2dist_opt1_smooth/'
+params_fname = ('/users/rthorpe/data/rthorpe/hnn_out/param/'
                 'med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
+#params_fname = ('/home/ryan/Dropbox (Brown)/nociceptive_erp_paper_figures/'
+#                'scripts/sims_hnn_core/sim_data_initial/'
+#                'med_nerve_2020_04_27_2prox_2dist_opt1_smooth/'
+#                'med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
 
 
 def run_and_save(drive_name, param_name, param_val, params_original):
