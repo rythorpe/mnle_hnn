@@ -2,6 +2,7 @@
 
 # Authors: Ryan Thorpe <ryvthorpe@gmail.com>
 
+import timeit
 import hnn_core
 from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
                       MPIBackend)
@@ -86,4 +87,7 @@ def run_and_save(drive_name, param_name, param_val, params_original):
 
 if __name__ == "__main__":
     params = hnn_core.read_params(params_fname)
+    start_t = timeit.default_timer()
     run_and_save('drive_1', 'param_1', 5, params)
+    stop_t = timeit.default_timer()
+    print(f'single sim run time: {stop_t - start_t}')
