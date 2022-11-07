@@ -36,7 +36,7 @@ params_to_vary = {'evprox_1': ['mu',
                   'evdist_1': ['mu',
                                'L2_basket_ampa']}
 params_fname = ('med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
-write_dir = '$HOME/scratch/sweep_mn_output/'
+write_dir = '$HOME/sweep_mn_output/'
 
 
 def sample_param(original_val):
@@ -151,7 +151,7 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
     avg_dpl = average_dipoles(dpls)
     #avg_dpl.plot()
     fname_out = f'{drive_name}_{param_name}_{param_val:.4e}.txt'
-    avg_dpl.write(op.join(write_dir, fname_out))
+    avg_dpl.write(op.join(fname_out))
 
 
 if __name__ == "__main__":
