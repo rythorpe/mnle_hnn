@@ -76,7 +76,7 @@ def run_and_save(drive_name, param_name, param_val, params_original):
         synaptic_delays=synaptic_delays_prox, event_seed=814,
         n_drive_cells=1, cell_specific=False)
 
-    with JoblibBackend(n_jobs=n_trials_per_sim):
+    with MPIBackend(n_procs=24):
         dpls = simulate_dipole(net, tstop=170., n_trials=n_trials_per_sim)
 
     scaling_factor = 40
