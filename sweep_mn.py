@@ -95,10 +95,10 @@ def get_drive_params(drive_name, resample_param=None):
         loc = 'proximal'
 
     # resample a param to +/-10% if specified
+    new_val = None
     if resample_param is not None:
         if resample_param == 'mu':
-            mu = sample_param(mu)
-            new_val = mu
+            mu = new_val = sample_param(mu)
         elif resample_param[-4:] == 'ampa':
             original_val = weights_ampa[resample_param[:-5]]
             weights_ampa[resample_param[:-5]] = sample_param(original_val)
@@ -127,7 +127,9 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
 
         drive_params = get_drive_params(drive_name=name,
                                         resample_param=resample_param)
-        mu, sigma, weights_ampa, weights_nmda, syn_delays, loc, param_val = drive_params
+        mu, sigma, weights_ampa, weights_nmda, syn_delays, loc, new_val = drive_params
+        if new_val is not None:
+            param_val = new_val
 
         # add synchronous drive
         net.add_evoked_drive(
