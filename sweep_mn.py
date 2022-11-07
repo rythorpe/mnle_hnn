@@ -41,7 +41,7 @@ def sample_param(original_val):
     # explore values <=10% change in original value
     lower_b = original_val - 0.1 * original_val
     upper_b = original_val + 0.1 * original_val
-    return lower_b + rng.rand() * (upper_b - lower_b)
+    return lower_b + rng.random() * (upper_b - lower_b)
 
 
 def get_drive_params(drive_name, resample_param=None):
