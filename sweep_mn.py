@@ -160,7 +160,8 @@ if __name__ == "__main__":
     #start_t = timeit.default_timer()
     for drive_name, drive_params in params_to_vary.items():
         for drive_param in drive_params:
-            run_and_save(params_to_vary.keys(), drive_name, drive_param,
-                         params.copy())
+            for sweep_idx in range(n_sweep_sims):
+                run_and_save(params_to_vary.keys(), drive_name, drive_param,
+                             params.copy())
     #stop_t = timeit.default_timer()
     #print(f'single sim run time: {stop_t - start_t}')
