@@ -151,7 +151,7 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
     avg_dpl = average_dipoles(dpls)
     #avg_dpl.plot()
     fname_out = f'{drive_name}_{param_name}_{param_val:.4e}.txt'
-    avg_dpl.write(op.join(fname_out))
+    avg_dpl.write(op.join(write_dir, fname_out))
 
 
 if __name__ == "__main__":
