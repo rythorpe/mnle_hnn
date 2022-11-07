@@ -36,7 +36,7 @@ params_to_vary = {'evprox_1': ['mu',
                   'evdist_1': ['mu',
                                'L2_basket_ampa']}
 params_fname = ('med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
-write_dir = '$HOME/sweep_mn_output/'
+write_dir = '~/scratch/sweep_mn_output/'
 
 
 def sample_param(original_val):
