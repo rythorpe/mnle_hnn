@@ -3,7 +3,7 @@
 #SBATCH -J sweep_mn_job -o sweep_mn_job.out -e sweep_mn_job.err
 #SBATCH --mem=40g --ntasks-per-node=24 -N 1
 ##SBATCH --mem=128g -n 100
-#SBATCH -t 6:00:00
+#SBATCH -t 48:00:00
 #SBATCH -A carney-sjones-condo
 
 # load modules and activate python env

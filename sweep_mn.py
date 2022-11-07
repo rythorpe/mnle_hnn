@@ -10,10 +10,8 @@ from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
                       MPIBackend, JoblibBackend)
 
 # hyper-params for parameter sweep
-#n_sweep_sims = 50
-n_sweep_sims = 2
-#n_trials_per_sim = 100
-n_trials_per_sim = 1
+n_sweep_sims = 50
+n_trials_per_sim = 100
 seed = 1
 params_to_vary = {'evprox_1': ['mu',
                                'L2_pyramidal_nmda',
