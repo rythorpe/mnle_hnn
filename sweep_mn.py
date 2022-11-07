@@ -97,13 +97,16 @@ def get_drive_params(drive_name, resample_param=None):
     # resample a param to +/-10% if specified
     if resample_param is not None:
         if resample_param == 'mu':
-            mu = new_val = sample_param(mu)
+            mu = sample_param(mu)
+            new_val = mu
         elif resample_param[-4:] == 'ampa':
             original_val = weights_ampa[resample_param[:-5]]
-            weights_ampa[resample_param[:-5]] = new_val = sample_param(original_val)
+            weights_ampa[resample_param[:-5]] = sample_param(original_val)
+            new_val = weights_ampa[resample_param[:-5]]
         elif resample_param[-4:] == 'nmda':
             original_val = weights_nmda[resample_param[:-5]]
-            weights_nmda[resample_param[:-5]] = new_val = sample_param(original_val)
+            weights_nmda[resample_param[:-5]] = sample_param(original_val)
+            new_val = weights_nmda[resample_param[:-5]]
 
     return mu, sigma, weights_ampa, weights_nmda, syn_delays, loc, new_val
 
