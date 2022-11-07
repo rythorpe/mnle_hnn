@@ -10,7 +10,10 @@ from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
 # hyper-params for parameter sweep
 n_sweep_sims = 50
 n_trials_per_sim = 100
-params_to_vary = []
+params_to_vary = {'evprox_1': [],
+                  'evdist_1': [],
+                  'evdist_2': [],
+                  'evprox_2': []}
 params_fname = ('med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
 
 
@@ -81,7 +84,7 @@ def run_and_save(drive_name, param_name, param_val, params_original):
     for dpl in dpls:
         dpl.scale(scaling_factor).smooth(smooth_win)
     avg_dpl = average_dipoles(dpls)
-    avg_dpl.plot()
+    #avg_dpl.plot()
     avg_dpl.write(f'{param_name}_{param_val}.txt')
 
 
