@@ -29,10 +29,6 @@ params_to_vary = {'evprox_1': ['mu',
                                'L2_pyramidal_nmda',
                                'L5_basket_nmda',
                                'L5_pyramidal_nmda']}
-params_to_vary = {'evprox_1': ['mu',
-                               'L2_pyramidal_nmda'],
-                  'evdist_1': ['mu',
-                               'L2_basket_ampa']}
 params_fname = ('med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
 write_dir = '/users/rthorpe/scratch/sweep_mn_output/'
 
