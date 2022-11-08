@@ -29,8 +29,8 @@ params_to_vary = {'evprox_1': ['mu',
                                'L2_pyramidal_nmda',
                                'L5_basket_nmda',
                                'L5_pyramidal_nmda']}
-params_fname = ('med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param')
-write_dir = '/users/rthorpe/scratch/sweep_mn_output/'
+params_fname = 'med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param'
+write_dir = '/users/rthorpe/scratch/sweep_mn_output_const_dx/'
 
 
 def sample_param(original_val):
@@ -38,6 +38,22 @@ def sample_param(original_val):
     lower_b = original_val - 0.1 * original_val
     upper_b = original_val + 0.1 * original_val
     return lower_b + rng.random() * (upper_b - lower_b)
+
+
+def sample_param_const_dx(original_val, time_param=False):
+    # explore values sampled more consitently across parameters
+    if time_param:
+        # sample uniformly +/-4 ms
+        lower_b = original_val - 4
+        upper_b = original_val + 4
+        x = lower_b + rng.random() * (upper_b - lower_b)
+    else:
+        # sample on log_10 scaled
+        lower_b = -5  # lower bound exponent
+        upper_b = -3  # upper bound exponent
+        log_x = lower_b + rng.random() * (upper_b - lower_b)
+        x = 10 ** log_x
+    return x
 
 
 def get_drive_params(drive_name, resample_param=None):
@@ -90,18 +106,18 @@ def get_drive_params(drive_name, resample_param=None):
                       'L5_basket': 1., 'L5_pyramidal': 1.}
         loc = 'proximal'
 
-    # resample a param to +/-10% if specified
+    # resample a param if specified
     new_val = None
     if resample_param is not None:
         if resample_param == 'mu':
-            mu = new_val = sample_param(mu)
+            mu = new_val = sample_param_const_dx(mu, time_param=True)
         elif resample_param[-4:] == 'ampa':
             original_val = weights_ampa[resample_param[:-5]]
-            weights_ampa[resample_param[:-5]] = sample_param(original_val)
+            weights_ampa[resample_param[:-5]] = sample_param_const_dx(original_val)
             new_val = weights_ampa[resample_param[:-5]]
         elif resample_param[-4:] == 'nmda':
             original_val = weights_nmda[resample_param[:-5]]
-            weights_nmda[resample_param[:-5]] = sample_param(original_val)
+            weights_nmda[resample_param[:-5]] = sample_param_const_dx(original_val)
             new_val = weights_nmda[resample_param[:-5]]
 
     return mu, sigma, weights_ampa, weights_nmda, syn_delays, loc, new_val
