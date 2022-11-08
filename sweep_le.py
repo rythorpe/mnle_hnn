@@ -16,20 +16,14 @@ seed = 1
 params_to_vary = {'evprox_1': ['mu',
                                'L2_pyramidal_nmda',
                                'L5_basket_nmda',
-                               'L5_pyramidal_nmda'],
-                  'evdist_1': ['mu',
-                               'L2_basket_ampa',
-                               'L2_pyramidal_nmda',
-                               'L5_pyramidal_nmda'],
-                  'evdist_2': ['mu',
-                               'L2_basket_ampa',
-                               'L2_pyramidal_nmda',
-                               'L5_pyramidal_nmda'],
+                               'L5_basket_nmda'],
+                  'dist_burst': ['idi',
+                                 'burst_mu'],
                   'evprox_2': ['mu',
                                'L2_pyramidal_nmda',
                                'L5_basket_nmda',
                                'L5_pyramidal_nmda']}
-params_fname = 'med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param'
+params_fname = 'laser_4dist_2prox_50trials_opt1_smooth.param '
 write_dir = '/users/rthorpe/scratch/sweep_le_output/'
 
 
@@ -60,7 +54,7 @@ def get_drive_params(drive_name, resample_param=None):
 
     # Proximal 1
     if drive_name == 'evprox_1':
-        mu = 20.808669
+        mu = 119.400535
         sigma = 4.121563
         weights_ampa = {'L2_basket': 0.003617, 'L2_pyramidal': 0.003903,
                         'L5_basket': 0.003037, 'L5_pyramidal': 0.001963}
@@ -84,6 +78,30 @@ def get_drive_params(drive_name, resample_param=None):
 
     # Distal 2
     elif drive_name == 'evdist_2':
+        mu = 83.962981
+        sigma = 4.356796
+        weights_ampa = {'L2_basket': 0.004065, 'L2_pyramidal': .001884,
+                        'L5_pyramidal': 0.001802}
+        weights_nmda = {'L2_basket': 0.003188, 'L2_pyramidal': 0.00177,
+                        'L5_pyramidal': 0.001749}
+        syn_delays = {'L2_basket': 0.1, 'L2_pyramidal': 0.1,
+                      'L5_pyramidal': 0.1}
+        loc = 'distal'
+
+    # Distal 3
+    elif drive_name == 'evdist_3':
+        mu = 83.962981
+        sigma = 4.356796
+        weights_ampa = {'L2_basket': 0.004065, 'L2_pyramidal': .001884,
+                        'L5_pyramidal': 0.001802}
+        weights_nmda = {'L2_basket': 0.003188, 'L2_pyramidal': 0.00177,
+                        'L5_pyramidal': 0.001749}
+        syn_delays = {'L2_basket': 0.1, 'L2_pyramidal': 0.1,
+                      'L5_pyramidal': 0.1}
+        loc = 'distal'
+
+    # Distal 4
+    elif drive_name == 'evdist_4':
         mu = 83.962981
         sigma = 4.356796
         weights_ampa = {'L2_basket': 0.004065, 'L2_pyramidal': .001884,
@@ -152,9 +170,9 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
             n_drive_cells=1, cell_specific=False)
 
     with MPIBackend(n_procs=24):
-        dpls = simulate_dipole(net, tstop=170., n_trials=n_trials_per_sim)
+        dpls = simulate_dipole(net, tstop=300., n_trials=n_trials_per_sim)
 
-    scaling_factor = 40
+    scaling_factor = 2500
     smooth_win = 20
     for dpl in dpls:
         dpl.scale(scaling_factor).smooth(smooth_win)
