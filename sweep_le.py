@@ -10,8 +10,8 @@ from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
                       MPIBackend, JoblibBackend)
 
 # hyper-params for parameter sweep
-n_sweep_sims = 50
-n_trials_per_sim = 100
+n_sweep_sims = 2  # XXX
+n_trials_per_sim = 1  # XXX
 seed = 1
 params_to_vary = {'evprox_1': ['mu',
                                'L2_basket_ampa',
@@ -27,7 +27,7 @@ params_to_vary = {'evprox_1': ['mu',
                   'evprox_2': ['mu',
                                'L5_pyramidal_ampa',
                                'L5_pyramidal_nmda']}
-params_to_vary = {}
+params_to_vary = {'dist_burst': ['idi'], 'evprox_2': ['mu']}  # XXX fix
 params_fname = 'laser_4dist_2prox_50trials_opt1_smooth.param '
 write_dir = '/users/rthorpe/scratch/sweep_le_output/'
 
@@ -42,9 +42,9 @@ def sample_param(original_val):
 def sample_param_const_dx(original_val, time_param=False):
     # explore values sampled more consitently across parameters
     if time_param:
-        # sample uniformly +/-4 ms
-        lower_b = original_val - 4
-        upper_b = original_val + 4
+        # sample uniformly +/-10 ms
+        lower_b = original_val - 10
+        upper_b = original_val + 10
         x = lower_b + rng.random() * (upper_b - lower_b)
     else:
         # sample on log_10 scaled
@@ -152,6 +152,16 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
     # (without automatically adding drives)
     net = jones_2009_model(params=params_original)
 
+    # for collective burst of distal drives, param resampling must happen
+    # outside of the for loop below
+    if selected_drive_name == 'dist_burst':
+        burst_center_time = 157.5
+        original_isi = 25.0
+        resampled_isi = sample_param_const_dx(original_isi, time_param=True)
+        dist_drive_times = np.arange(4) * resampled_isi
+        dist_drive_times -= dist_drive_times.mean()
+        dist_drive_times += burst_center_time
+
     for name in all_drive_names:
         # only resample a given parameter (from its original value) for the
         # selected drive; all other drives default to original values
@@ -165,6 +175,19 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
         mu, sigma, weights_ampa, weights_nmda, syn_delays, loc, new_val = drive_params
         if new_val is not None:
             param_val = new_val
+
+        # reset all distal drives in the burst if the inra-burst ISI is being
+        # jittered this simulation
+        if selected_drive_name == 'dist_burst':
+            param_val = resampled_isi
+            if name == 'evdist_1':
+                mu = dist_drive_times[0]
+            if name == 'evdist_2':
+                mu = dist_drive_times[1]
+            if name == 'evdist_3':
+                mu = dist_drive_times[2]
+            if name == 'evdist_4':
+                mu = dist_drive_times[3]
 
         # add synchronous drive
         net.add_evoked_drive(
@@ -182,7 +205,7 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
     for dpl in dpls:
         dpl.scale(scaling_factor).smooth(smooth_win)
     avg_dpl = average_dipoles(dpls)
-    #avg_dpl.plot()
+    avg_dpl.plot()
     fname_out = f'{drive_name}_{param_name}_{param_val:.4e}.txt'
     avg_dpl.write(op.join(write_dir, fname_out))
 
@@ -190,13 +213,14 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
 if __name__ == "__main__":
     params = hnn_core.read_params(params_fname)
     rng = np.random.default_rng(seed)
-    #start_t = timeit.default_timer()
+    
     all_drive_names = ['evprox_1', 'evdist_1', 'evdist_2', 'evdist_3',
                        'evdist_4', 'evprox_2']
     for drive_name, drive_params in params_to_vary.items():
         for drive_param in drive_params:
             for sweep_idx in range(n_sweep_sims):
+                start_t = timeit.default_timer()
                 run_and_save(all_drive_names, drive_name, drive_param,
                              params.copy())
-    #stop_t = timeit.default_timer()
-    #print(f'single sim run time: {stop_t - start_t}')
+                stop_t = timeit.default_timer()
+                print(f'single sim run time: {stop_t - start_t}')
