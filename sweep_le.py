@@ -14,15 +14,20 @@ n_sweep_sims = 50
 n_trials_per_sim = 100
 seed = 1
 params_to_vary = {'evprox_1': ['mu',
-                               'L2_pyramidal_nmda',
-                               'L5_basket_nmda',
+                               'L2_basket_ampa',
+                               'L2_basket_nmda',
+                               'L5_basket_ampa',
                                'L5_basket_nmda'],
-                  'dist_burst': ['idi',
-                                 'burst_mu'],
+                  'evdist_1': ['mu',
+                               'L2_basket_ampa',
+                               'L2_basket_nmda',
+                               'L5_basket_ampa',
+                               'L5_basket_nmda'],
+                  'dist_burst': ['idi'],
                   'evprox_2': ['mu',
-                               'L2_pyramidal_nmda',
-                               'L5_basket_nmda',
+                               'L5_pyramidal_ampa',
                                'L5_pyramidal_nmda']}
+params_to_vary = {}
 params_fname = 'laser_4dist_2prox_50trials_opt1_smooth.param '
 write_dir = '/users/rthorpe/scratch/sweep_le_output/'
 
@@ -55,71 +60,71 @@ def get_drive_params(drive_name, resample_param=None):
     # Proximal 1
     if drive_name == 'evprox_1':
         mu = 119.400535
-        sigma = 4.121563
-        weights_ampa = {'L2_basket': 0.003617, 'L2_pyramidal': 0.003903,
-                        'L5_basket': 0.003037, 'L5_pyramidal': 0.001963}
-        weights_nmda = {'L2_basket': 0.002893, 'L2_pyramidal': 0.000505,
-                        'L5_basket': 0.00278, 'L5_pyramidal': 0.001869}
+        sigma = 11.990812
+        weights_ampa = {'L2_basket': 0.001369, 'L2_pyramidal': 0.00247,
+                        'L5_basket': 0.000875, 'L5_pyramidal': 0.00206}
+        weights_nmda = {'L2_basket': 0.000775, 'L2_pyramidal': 0.000076,
+                        'L5_basket': 0.000852, 'L5_pyramidal': 0.0}
         syn_delays = {'L2_basket': 0.1, 'L2_pyramidal': 0.1,
                       'L5_basket': 1., 'L5_pyramidal': 1.}
         loc = 'proximal'
 
     # Distal 1
     elif drive_name == 'evdist_1':
-        mu = 31.592845
-        sigma = 2.714237
-        weights_ampa = {'L2_basket': 0.004265, 'L2_pyramidal': .003248,
-                        'L5_pyramidal': 0.000932}
-        weights_nmda = {'L2_basket': 0.002884, 'L2_pyramidal': 0.005126,
-                        'L5_pyramidal': 0.000983}
+        mu = 120.008737
+        sigma = 10.038986
+        weights_ampa = {'L2_basket': 0.005218, 'L2_pyramidal': 0.004511,
+                        'L5_pyramidal': 0.001218}
+        weights_nmda = {'L2_basket': 0.002971, 'L2_pyramidal': 0.004739,
+                        'L5_pyramidal': 0.00069}
         syn_delays = {'L2_basket': 0.1, 'L2_pyramidal': 0.1,
                       'L5_pyramidal': 0.1}
         loc = 'distal'
 
     # Distal 2
     elif drive_name == 'evdist_2':
-        mu = 83.962981
-        sigma = 4.356796
-        weights_ampa = {'L2_basket': 0.004065, 'L2_pyramidal': .001884,
-                        'L5_pyramidal': 0.001802}
-        weights_nmda = {'L2_basket': 0.003188, 'L2_pyramidal': 0.00177,
-                        'L5_pyramidal': 0.001749}
+        mu = 145.221516
+        sigma = 9.996537
+        weights_ampa = {'L2_basket': 0.005431, 'L2_pyramidal': 0.004463,
+                        'L5_pyramidal': 0.00068}
+        weights_nmda = {'L2_basket': 0.002817, 'L2_pyramidal': 0.007967,
+                        'L5_pyramidal': 0.000661}
         syn_delays = {'L2_basket': 0.1, 'L2_pyramidal': 0.1,
                       'L5_pyramidal': 0.1}
         loc = 'distal'
 
     # Distal 3
     elif drive_name == 'evdist_3':
-        mu = 83.962981
-        sigma = 4.356796
-        weights_ampa = {'L2_basket': 0.004065, 'L2_pyramidal': .001884,
-                        'L5_pyramidal': 0.001802}
-        weights_nmda = {'L2_basket': 0.003188, 'L2_pyramidal': 0.00177,
-                        'L5_pyramidal': 0.001749}
+        mu = 169.94315
+        sigma = 8.83142
+        weights_ampa = {'L2_basket': 0.004804, 'L2_pyramidal': 0.005007,
+                        'L5_pyramidal': 0.0007}
+        weights_nmda = {'L2_basket': 0.003121, 'L2_pyramidal': 0.006249,
+                        'L5_pyramidal': 0.000646}
         syn_delays = {'L2_basket': 0.1, 'L2_pyramidal': 0.1,
                       'L5_pyramidal': 0.1}
         loc = 'distal'
 
     # Distal 4
     elif drive_name == 'evdist_4':
-        mu = 83.962981
-        sigma = 4.356796
-        weights_ampa = {'L2_basket': 0.004065, 'L2_pyramidal': .001884,
-                        'L5_pyramidal': 0.001802}
-        weights_nmda = {'L2_basket': 0.003188, 'L2_pyramidal': 0.00177,
-                        'L5_pyramidal': 0.001749}
+        mu = 195.079004
+        sigma = 10.141505
+        weights_ampa = {'L2_basket': 0.004026, 'L2_pyramidal': 0.004564,
+                        'L5_pyramidal': 0.000678}
+        weights_nmda = {'L2_basket': 0.002731, 'L2_pyramidal': 0.004486,
+                        'L5_pyramidal': 0.000695}
         syn_delays = {'L2_basket': 0.1, 'L2_pyramidal': 0.1,
                       'L5_pyramidal': 0.1}
         loc = 'distal'
 
     # Proximal 2
     elif drive_name == 'evprox_2':
-        mu = 134.383155
-        sigma = 4.5
-        weights_ampa = {'L2_basket': 0.003989, 'L2_pyramidal': 0.008833,
-                        'L5_basket': 0.006875, 'L5_pyramidal': 0.00238}
-        weights_nmda = {'L2_basket': 0.008614, 'L2_pyramidal': 0.00926,
-                        'L5_basket': 0.002055, 'L5_pyramidal': 0.003047}
+        mu = 252.933393
+        sigma = 12.32985
+        weights_ampa = {'L2_basket': 0.000784, 'L2_pyramidal': 0.003678,
+                        'L5_basket': 0.000603, 'L5_pyramidal': 0.001343}
+        weights_nmda = {'L2_basket': 0.000818, 'L2_pyramidal': 0.000192,
+                        'L5_basket': 0.000341, 'L5_pyramidal': 0.000418}
         syn_delays = {'L2_basket': 0.1, 'L2_pyramidal': 0.1,
                       'L5_basket': 1., 'L5_pyramidal': 1.}
         loc = 'proximal'
@@ -186,10 +191,12 @@ if __name__ == "__main__":
     params = hnn_core.read_params(params_fname)
     rng = np.random.default_rng(seed)
     #start_t = timeit.default_timer()
+    all_drive_names = ['evprox_1', 'evdist_1', 'evdist_2', 'evdist_3',
+                       'evdist_4', 'evprox_2']
     for drive_name, drive_params in params_to_vary.items():
         for drive_param in drive_params:
             for sweep_idx in range(n_sweep_sims):
-                run_and_save(params_to_vary.keys(), drive_name, drive_param,
+                run_and_save(all_drive_names, drive_name, drive_param,
                              params.copy())
     #stop_t = timeit.default_timer()
     #print(f'single sim run time: {stop_t - start_t}')
