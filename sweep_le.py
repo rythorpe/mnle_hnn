@@ -28,7 +28,7 @@ params_to_vary = {'evprox_1': ['mu',
                                'L5_pyramidal_ampa',
                                'L5_pyramidal_nmda']}
 params_to_vary = {'dist_burst': ['idi'], 'evprox_2': ['mu']}  # XXX fix
-params_fname = 'laser_4dist_2prox_50trials_opt1_smooth.param '
+params_fname = 'laser_4dist_2prox_50trials_opt1_smooth.param'
 write_dir = '/users/rthorpe/scratch/sweep_le_output/'
 
 
