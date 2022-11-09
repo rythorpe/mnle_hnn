@@ -10,8 +10,8 @@ from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
                       MPIBackend, JoblibBackend)
 
 # hyper-params for parameter sweep
-n_sweep_sims = 1  # XXX
-n_trials_per_sim = 100  # XXX
+n_sweep_sims = 50
+n_trials_per_sim = 100
 seed = 1
 params_to_vary = {'evprox_1': ['mu',
                                'L2_basket_ampa',
@@ -27,7 +27,6 @@ params_to_vary = {'evprox_1': ['mu',
                   'evprox_2': ['mu',
                                'L5_pyramidal_ampa',
                                'L5_pyramidal_nmda']}
-params_to_vary = {'dist_burst': ['idi'], 'evprox_2': ['mu']}  # XXX fix
 params_fname = 'laser_4dist_2prox_50trials_opt1_smooth.param'
 write_dir = '/users/rthorpe/scratch/sweep_le_output/'
 
@@ -205,7 +204,7 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
     for dpl in dpls:
         dpl.scale(scaling_factor).smooth(smooth_win)
     avg_dpl = average_dipoles(dpls)
-    avg_dpl.plot()
+    #avg_dpl.plot()
     fname_out = f'{drive_name}_{param_name}_{param_val:.4e}.txt'
     avg_dpl.write(op.join(write_dir, fname_out))
 
@@ -213,14 +212,13 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
 if __name__ == "__main__":
     params = hnn_core.read_params(params_fname)
     rng = np.random.default_rng(seed)
-    
     all_drive_names = ['evprox_1', 'evdist_1', 'evdist_2', 'evdist_3',
                        'evdist_4', 'evprox_2']
     for drive_name, drive_params in params_to_vary.items():
         for drive_param in drive_params:
             for sweep_idx in range(n_sweep_sims):
-                start_t = timeit.default_timer()
+                #start_t = timeit.default_timer()
                 run_and_save(all_drive_names, drive_name, drive_param,
                              params.copy())
-                stop_t = timeit.default_timer()
-                print(f'single sim run time: {stop_t - start_t}')
+                #stop_t = timeit.default_timer()
+                #print(f'single sim run time: {stop_t - start_t}')
