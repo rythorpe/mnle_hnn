@@ -11,7 +11,7 @@ from hnn_core import (simulate_dipole, jones_2009_model, average_dipoles,
 
 # hyper-params for parameter sweep
 n_sweep_sims = 1  # XXX
-n_trials_per_sim = 1  # XXX
+n_trials_per_sim = 100  # XXX
 seed = 1
 params_to_vary = {'evprox_1': ['mu',
                                'L2_basket_ampa',
