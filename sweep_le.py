@@ -15,16 +15,16 @@ n_trials_per_sim = 100
 seed = 1
 params_to_vary = {'evprox_1': ['mu',
                                'L2_basket_ampa',
-                               'L2_basket_nmda',
-                               'L5_basket_ampa',
-                               'L5_basket_nmda'],
+                               'L2_pyramidal_ampa',
+                               'L5_basket_nmda',
+                               'L5_pyramidal_ampa'],
                   'evdist_1': ['mu',
                                'L2_basket_ampa',
-                               'L2_basket_nmda',
-                               'L5_basket_ampa',
-                               'L5_basket_nmda'],
+                               'L2_pyramidal_ampa',
+                               'L2_pyramidal_nmda'],
                   'dist_burst': ['idi'],
                   'evprox_2': ['mu',
+                               'L2_pyramidal_ampa',
                                'L5_pyramidal_ampa',
                                'L5_pyramidal_nmda']}
 params_fname = 'laser_4dist_2prox_50trials_opt1_smooth.param'

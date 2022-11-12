@@ -74,7 +74,7 @@ def get_drive_params(drive_name, resample_param=None):
     elif drive_name == 'evdist_1':
         mu = 31.592845
         sigma = 2.714237
-        weights_ampa = {'L2_basket': 0.004265, 'L2_pyramidal': .003248,
+        weights_ampa = {'L2_basket': 0.004265, 'L2_pyramidal': 0.003248,
                         'L5_pyramidal': 0.000932}
         weights_nmda = {'L2_basket': 0.002884, 'L2_pyramidal': 0.005126,
                         'L5_pyramidal': 0.000983}
@@ -86,7 +86,7 @@ def get_drive_params(drive_name, resample_param=None):
     elif drive_name == 'evdist_2':
         mu = 83.962981
         sigma = 4.356796
-        weights_ampa = {'L2_basket': 0.004065, 'L2_pyramidal': .001884,
+        weights_ampa = {'L2_basket': 0.004065, 'L2_pyramidal': 0.001884,
                         'L5_pyramidal': 0.001802}
         weights_nmda = {'L2_basket': 0.003188, 'L2_pyramidal': 0.00177,
                         'L5_pyramidal': 0.001749}
