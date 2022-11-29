@@ -16,8 +16,7 @@ seed = 1
 params_to_vary = {'evprox_1': ['mu',
                                'L2_basket_ampa',
                                'L2_pyramidal_ampa',
-                               'L5_basket_nmda',
-                               'L5_pyramidal_ampa'],
+                               'L5_basket_nmda'],
                   'evdist_1': ['mu',
                                'L2_basket_ampa',
                                'L2_pyramidal_ampa',
@@ -154,12 +153,11 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
     # for collective burst of distal drives, param resampling must happen
     # outside of the for loop below
     if selected_drive_name == 'dist_burst':
-        burst_center_time = 157.5
+        burst_start_time = 120.0
+        burst_stop_time = 200.0
         original_isi = 25.0
         resampled_isi = sample_param_const_dx(original_isi, time_param=True)
-        dist_drive_times = np.arange(4) * resampled_isi
-        dist_drive_times -= dist_drive_times.mean()
-        dist_drive_times += burst_center_time
+        dist_drive_times = burst_start_time + np.arange(4) * resampled_isi
 
     for name in all_drive_names:
         # only resample a given parameter (from its original value) for the
@@ -187,6 +185,9 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
                 mu = dist_drive_times[2]
             if name == 'evdist_4':
                 mu = dist_drive_times[3]
+            if mu > burst_stop_time:
+                # skip this drive if it lies outside the burst window
+                continue
 
         # add synchronous drive
         net.add_evoked_drive(
