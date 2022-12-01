@@ -50,7 +50,7 @@ def sample_param_const_dx(original_val, time_param=False):
     else:
         # sample on log_10 scaled
         lower_b = -5  # lower bound exponent
-        upper_b = -3  # upper bound exponent
+        upper_b = -2  # upper bound exponent
         log_x = lower_b + rng.random() * (upper_b - lower_b)
         x = 10 ** log_x
     return x
