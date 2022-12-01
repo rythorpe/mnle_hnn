@@ -160,7 +160,7 @@ def run_and_save(all_drive_names, selected_drive_name, param_name,
         dpl.scale(scaling_factor).smooth(smooth_win)
     avg_dpl = average_dipoles(dpls)
     #avg_dpl.plot()
-    fname_out = f'{drive_name}_{param_name}_{param_val:.4e}.txt'
+    fname_out = f'{drive_name}_{param_name}_{param_val:.6e}.txt'
     avg_dpl.write(op.join(write_dir, fname_out))
 
 
