@@ -30,7 +30,7 @@ params_to_vary = {'evprox_1': ['mu',
                                'L5_basket_nmda',
                                'L5_pyramidal_nmda']}
 params_fname = 'med_nerve_2020_04_27_2prox_2dist_opt1_smooth.param'
-write_dir = '/users/rthorpe/scratch/sweep_mn_output_const_dx/'
+write_dir = '/users/rthorpe/scratch/sweep_mn_output/'
 
 
 def sample_param(original_val):
