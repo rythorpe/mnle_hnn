@@ -23,12 +23,12 @@ params_fname = ('/home/ryan/Dropbox (Brown)/nociceptive_erp_paper_figures/'
 write_dir = '/home/ryan/Desktop/stuff/'
 
 
-def sample_param(lb, ub):
+def sample_param(lb, ub, rng):
     # uniformly sample within upper and lower bounds
     return lb + rng.random() * (ub - lb)
 
 
-def get_drive_params(drive_name):
+def get_drive_params(drive_name, rng):
 
     # Proximal 1
     if drive_name == 'evprox_1':
@@ -44,7 +44,7 @@ def get_drive_params(drive_name):
 
     # Distal 1
     elif drive_name == 'evdist_1':
-        mu = sample_param(120.0, 200.0)
+        mu = sample_param(120.0, 200.0, rng)
         sigma = 10.038986
         weights_ampa = {'L2_basket': 0.005218, 'L2_pyramidal': 0.004511,
                         'L5_pyramidal': 0.001218}
@@ -56,7 +56,7 @@ def get_drive_params(drive_name):
 
     # Distal 2
     elif drive_name == 'evdist_2':
-        mu = sample_param(120.0, 200.0)
+        mu = sample_param(120.0, 200.0, rng)
         sigma = 9.996537
         weights_ampa = {'L2_basket': 0.005431, 'L2_pyramidal': 0.004463,
                         'L5_pyramidal': 0.00068}
@@ -68,7 +68,7 @@ def get_drive_params(drive_name):
 
     # Distal 3
     elif drive_name == 'evdist_3':
-        mu = sample_param(120.0, 200.0)
+        mu = sample_param(120.0, 200.0, rng)
         sigma = 8.83142
         weights_ampa = {'L2_basket': 0.004804, 'L2_pyramidal': 0.005007,
                         'L5_pyramidal': 0.0007}
@@ -80,7 +80,7 @@ def get_drive_params(drive_name):
 
     # Distal 4
     elif drive_name == 'evdist_4':
-        mu = sample_param(120.0, 200.0)
+        mu = sample_param(120.0, 200.0, rng)
         sigma = 10.141505
         weights_ampa = {'L2_basket': 0.004026, 'L2_pyramidal': 0.004564,
                         'L5_pyramidal': 0.000678}
@@ -107,6 +107,8 @@ def get_drive_params(drive_name):
 
 if __name__ == "__main__":
 
+    sync_drives = False
+
     emp_dpl = read_dipole('/home/ryan/Dropbox (Brown)/'
                           'nociceptive_erp_paper_figures/scripts/'
                           'sim_data_hnn_core/empirical_dpl_data/'
@@ -128,8 +130,14 @@ if __name__ == "__main__":
         event_seed = seed + trial_idx
 
         for drive_name in all_drive_names:
-            drive_specs = get_drive_params(drive_name)
+            drive_specs = get_drive_params(drive_name, rng)
             mu, sigma, weights_ampa, weights_nmda, syn_delays, loc = drive_specs
+            if sync_drives:
+                n_drive_cells = 1
+                cell_specific = False
+            else:
+                n_drive_cells = 'n_cells'
+                cell_specific = True
 
             # add synchronous drive
             net.add_evoked_drive(
@@ -137,7 +145,8 @@ if __name__ == "__main__":
                 weights_ampa=weights_ampa,
                 weights_nmda=weights_nmda, location=loc,
                 synaptic_delays=syn_delays,
-                n_drive_cells=1, cell_specific=False, event_seed=event_seed)
+                n_drive_cells=n_drive_cells, cell_specific=cell_specific,
+                event_seed=event_seed)
 
         with MPIBackend(n_procs=10):
             dpls.extend(simulate_dipole(net, tstop=300., n_trials=1))
